@@ -1,0 +1,18 @@
+터미널 명령어 명령어
+택스트파일 만들기:  echo "" > 파일명
+파일 지우기 : rm
+폰트 키우기/줄이기 cmd +/-
+
+
+Homebrew 명령어
+Brew info (app) 설치한 앱의 정보 확인
+
+Conda 명령어
+Conda info 가상환경 정보확인
+ 
+Pyenv
+Pyenv version 버전확인
+Peenv versions 다운로드된 버전들 확인
+
+가상환경
+Python3 -m venv (가상환경 이름) 가상환경 생성
