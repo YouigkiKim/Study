@@ -32,7 +32,7 @@ y,m,d = map(int,input('yyyy.mm.dd입력').split('.'))
 
 y,m,d = map(int,input('yyyy.mm.dd입력').split('.'))
 #map(함수,집합 형태-iterable 객체)
-a,b ,c=map(int,['1','2','3'])
+a,b,c=map(int,['1','2','3'])
 print(a,b,c,a+b+c)
 
 
