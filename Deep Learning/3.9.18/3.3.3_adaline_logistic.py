@@ -1,5 +1,6 @@
 from sklearn import datasets
 import numpy as np
+
 iris = datasets.load_iris()
 X = iris.data[:,[2,3]]
 y = iris.target
@@ -36,4 +37,3 @@ class LogisticRegressionGD:
     
     def predict(self, X):
         return np.where(self.activation(self.net_input(X)) >= 0.5, 1, 0)
-

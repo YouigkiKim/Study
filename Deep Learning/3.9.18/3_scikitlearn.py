@@ -73,16 +73,16 @@ def plot_decision_regions(X, y, classifier,test_idx=None, resolution = 0.02):
 
 X_combined_std = np.vstack((X_train_std, X_test_std))
 y_combined = np.hstack((y_train, y_test))
-plot_decision_regions(X=X_combined_std,
-                      y=y_combined,
-                      classifier=ppn,
-                      test_idx=range(105,150))
+# plot_decision_regions(X=X_combined_std,
+#                       y=y_combined,
+#                       classifier=ppn,
+#                       test_idx=range(105,150))
 
-plt.xlabel('Petla length [standardized]')
-plt.ylabel('Petal width [Standardized]')
-plt.legend(loc = 'upper left')
-plt.tight_layout()
-plt.show()
+# plt.xlabel('Petla length [standardized]')
+# plt.ylabel('Petal width [Standardized]')
+# plt.legend(loc = 'upper left')
+# plt.tight_layout()
+# plt.show()
 
 print('accuracy: %.3f'%ppn.score(X_test_std, y_test))
 
@@ -124,44 +124,94 @@ X_train_01_subset = X_train_std[(y_train == 0)| (y_train == 1) ]
 y_train_01_subset = y_train[(y_train ==0)| (y_train ==1)]
 lrgd = LogisticRegressionGD(eta=0.3, n_iter=1000, random_state=1)
 lrgd.fit(X_train_01_subset, y_train_01_subset)
-plot_decision_regions(X=X_train_01_subset,y=y_train_01_subset,classifier=lrgd)
-plt.xlabel('Petal length')
-plt.ylabel('Petal width')
-plt.legend(loc='upper left')
-plt.tight_layout()
-plt.show()
+# plot_decision_regions(X=X_train_01_subset,y=y_train_01_subset,classifier=lrgd)
+# plt.xlabel('Petal length')
+# plt.ylabel('Petal width')
+# plt.legend(loc='upper left')
+# plt.tight_layout()
+# plt.show()
 
 
 from sklearn.svm import SVC
 svm = SVC(kernel='linear', C=1.0, random_state=1)
 svm.fit(X_train_std, y_train)
-plot_decision_regions(X_combined_std,
-                      y_combined,
-                      classifier=svm,
-                      test_idx = range(105,150))
-plt.xlabel('Petal length [standardized]')
-plt.ylabel('Petal width [standardized]')
-plt.legend(loc = 'upper left')
-plt.tight_layout()
-plt.show()
+# plot_decision_regions(X_combined_std,
+#                       y_combined,
+#                       classifier=svm,
+#                       test_idx = range(105,150))
+# plt.xlabel('Petal length [standardized]')
+# plt.ylabel('Petal width [standardized]')
+# plt.legend(loc = 'upper left')
+# plt.tight_layout()
+# plt.show()
 
 #SVM
 svm = SVC(kernel='rbf', random_state=1, gamma=0.10, C=10.0)
 svm.fit(X_train_std, y_train)
-plot_decision_regions(X_combined_std, y_combined, classifier=svm,
-                      test_idx=range(105,150))
-plt.xlabel('Petal length [std]')
-plt.ylabel('Petal width [std]')
-plt.title('gamma=0.10')
-plt.tight_layout()
-plt.show()
+# plot_decision_regions(X_combined_std, y_combined, classifier=svm,
+#                       test_idx=range(105,150))
+# plt.xlabel('Petal length [std]')
+# plt.ylabel('Petal width [std]')
+# plt.title('gamma=0.10')
+# plt.tight_layout()
+# plt.show()
 
 svm = SVC(kernel='rbf', random_state=1, gamma=100, C=10.0)
 svm.fit(X_train_std, y_train)
-plot_decision_regions(X_combined_std, y_combined, classifier=svm,
-                      test_idx=range(105,150))
-plt.xlabel('Petal length [std]')
-plt.ylabel('Petal width [std]')
-plt.title('gamma=100')
+# plot_decision_regions(X_combined_std, y_combined, classifier=svm,
+#                       test_idx=range(105,150))
+# plt.xlabel('Petal length [std]')
+# plt.ylabel('Petal width [std]')
+# plt.title('gamma=100')
+# plt.tight_layout()
+# plt.show()
+
+
+# 결정트리를 이용한 분류
+
+from sklearn.tree import DecisionTreeClassifier
+tree_model = DecisionTreeClassifier(criterion='gini',
+                                    max_depth = 4,
+                                    random_state=1)
+tree_model.fit(X_train,y_train)
+X_combined = np.vstack((X_train,X_test))
+y_combined = np.hstack((y_train, y_test))
+plot_decision_regions(X_combined,
+                      y_combined,
+                      classifier = tree_model,
+                      test_idx = range(105,150))
+plt.xlabel('Petal length [cm]')
+plt.ylabel('Petal width [cm]')
+plt.tight_layout()
+plt.show()
+
+from sklearn import tree
+feature_names = ['Sepal length', 'Sepal width',
+                 'Petal length', 'Sepal width']
+tree.plot_tree(tree_model,
+               feature_names = feature_names,
+               filled=True)
+plt.show()
+                
+#랜덤 포레스트
+from sklearn.ensemble import RandomForestClassifier
+forest = RandomForestClassifier(n_estimators=25,
+                                random_state=1,
+                                n_jobs=2)
+forest.fit(X_train, y_train)
+plot_decision_regions(X_combined,y_combined,
+                      classifier=forest, test_idx = range(105,150))
+plt.xlabel('Petal length [cm]')
+plt.ylabel('Petal width [cm]')
+plt.legend(loc='upper left')
+plt.show()
+
+from sklearn.neighbors import KNeighborsClassifier
+knn = KNeighborsClassifier(n_neighbors=5, p=2,metric='minkowski')
+knn.fit(X_train_std, y_train)
+plot_decision_regions(X_combined_std,y_combined,classifier=knn, test_idx=range(105,150))
+plt.xlabel('Petal length [cm]')
+plt.ylabel('Petal width [cm]')
+plt.legend(loc='upper left')
 plt.tight_layout()
 plt.show()
