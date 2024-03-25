@@ -41,7 +41,6 @@ def plot_decision_regions(X, y, classifier,test_idx=None, resolution = 0.02):
                     linewidth=1, marker='o',
                     s=100, label='Test set')
 
-
 np.random.seed(1)
 X_xor = np.random.randn(200,2)
 y_xor = np.logical_xor(X_xor[:,0] >0,
