@@ -1,0 +1,28 @@
+딥러닝 예제 정리
+
+딥러닝 과정
+1. 모델 만들기
+2. 데이터처리
+3. 학습
+
+4. 결과 확인 후 여러 요인(활성함수, 손실함수, iteration횟수 등)변경하며 성능향상
+
+활성함수
+Tanh, sigmoid, relu, softmax,leakRelu
+ReLU는 f(x) = max(0, x)
+Leakrelu는 relu의 dead neurons problems를 해결하기 위해 음수에서도 약간의 기울기(~0.01)를 유지함
+Softmax는 분류문제의 출력층에서 사용 벡터를 입력으로 받아 각 클래스에 대하여 확률분포 출력 e^x함수에 출력값들 넣은 뒤 각 비율 출력
+	
+
+Optimizer(learning rate 수정 함수)
+adam,adagrad,agagelta,rmsprop,sgd ...
+Adam: Adaptive Moment Estimation의 약자로, 모멘텀과 RMSprop의 장점을 결합한 알고리즘입니다. 학습률을 각 매개변수에 독립적으로 조정합니다.
+Adagrad: 각 매개변수에 대해 개별적인 학습률 조정을 수행합니다. 크게 업데이트되지 않은 매개변수에는 더 큰 학습률을 적용합니다.
+Adadelta: Adagrad의 확장으로, 과거 모든 그래디언트를 누적하는 대신 고정 크기의 윈도우를 사용하여 그래디언트의 누적을 제한합니다.
+RMSprop: 가중치 갱신 시 이전 그래디언트가 얼마나 영향을 미칠지를 조정하여 학습 경로를 부드럽게 합니다.
+SGD (Stochastic Gradient Descent): 매 반복마다 임의의 데이터를 사용하여 그래디언트를 계산합니다. 기본적이지만 여전히 효과적인 방법입니다.
+
+
+손실함수
+최소제곱, binary_crossentropy ...
+Binary_crossentropy -> 두 개의 클래스로 분류되는 예측모델에 적합
