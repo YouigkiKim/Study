@@ -39,11 +39,13 @@
         "tuple": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "algorithm": "cpp"
+        "algorithm": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp"
     },
     
     "C_Cpp.intelliSenseEngine": "default",
-    "C_Cpp.errorSquiggles": "disabled",
+    "C_Cpp.errorSquiggles": "enabled",
     "C_Cpp.enhancedColorization": "enabled",
     "C_Cpp.intelliSenseEngineFallback": "enabled",
     "C_Cpp.loggingLevel": "Debug",
