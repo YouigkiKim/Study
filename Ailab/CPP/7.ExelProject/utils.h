@@ -3,6 +3,7 @@
 #include<iostream>
 #include <ostream>
 #include <string>
+#include <fstream>
 #include <ctime>
 using std::string;
 
@@ -34,9 +35,9 @@ class Stack{
     struct Node {
         Node* prev;
         string s;
-        Node(Node* prev, string s) : prev(prev),s(s) {}
+        Node(Node* prev, string s) : prev(prev),s(s) {
+        }
     };
-
     Node*   current;
     Node    start;
 
@@ -150,7 +151,21 @@ class TxtTable : public Table{
 };
 
 std::ostream& operator<<(std::ostream& o, Table& table);
-} //namespace MyExcel
 
+
+/*
+
+Excel class
+
+*/
+class Excel {
+    Table* current_table;
+
+    public:
+    Excel(int max_row, int max_col, int choice);
+    int     parse_user_input(string s);
+    void    command_line();
+};
+} //namespace MyExcel
 
 # endif // UTILS_H

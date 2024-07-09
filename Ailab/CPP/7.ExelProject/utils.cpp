@@ -18,6 +18,7 @@ void    Vector::push_back(string s){
     }
     // data의 마지막에 s 추가
     data[length] = s;   // data의 마지막 +1 주소에 
+    //std::cout<< "s pushed : " << s << std::endl;
     length++;           //2차원 행렬로 저장되기 때문에 ++만한다.
 }
 string  Vector::operator[](int i){return data[i];}
@@ -40,9 +41,11 @@ std::ostream& operator<<(std::ostream& o, Table& table){
 }
 
 //Stack function
-Stack::Stack() : start(NULL,"") {current = &start;}
+Stack::Stack() : start(NULL,""){current = &start;}
 void    Stack::push(string s){
     Node* n = new Node(current,s);
+    current = n;
+    //std::cout << "Stack pushed string : "<< s<<std::endl;
 }
 string  Stack::pop(){
     if(current == &start) return "";
@@ -137,6 +140,7 @@ int     Table::to_numeric(const string& s){
             return data_table[row][col] -> to_numeric();
         }
     }
+    return NULL;
 }
 int     Table::to_numeric(int x, int y){
     if(x < max_row_size && y<max_col_size && data_table[x][y]){
@@ -287,30 +291,19 @@ int DateCell::to_numeric(){ return static_cast<int>(data);}
 ExprCell
 
 */
-ExprCell::ExprCell(string data, int x, int y, Table *t)
- : Cell(x,y,t),data(data){}
-string ExprCell::stringify(){ }
-int ExprCell::to_numeric(){
-    double result = 0;
-    NumStack stack;
-
-    for(int i=0; i<exp_vec.size();i++){
-        string s = exp_vec[i];
-
-        //셀일경우
-        if(isalpha(s[0])){
-            stack.push(table -> to_numeric(s));
-        }else if(isdigit(s[0])){
-            stack.push(atoi(s.c_str()));
-        }
-    }
+// 입력인자 또한 data이고 조작하려는 멤버변수 이름 또한 data여서 업데이트 안되는 문제가 발생함.
+ExprCell::ExprCell(string string, int x, int y, Table *t)
+ : Cell(x,y,t),data(string){
+    parse_expression();
+    data = std::to_string(to_numeric());
+    //std::cout << "data:"<<data<< std::endl;
 }
+string ExprCell::stringify(){return data; }
 int ExprCell::to_numeric(){
     double result = 0;
     NumStack stack;
     for(int i=0;i<exp_vec.size();i++){
         string s = exp_vec[i];
-        
         //셀일경우
         if (isalpha(s[0])){
             stack.push(table -> to_numeric(s));
@@ -338,6 +331,7 @@ int ExprCell::to_numeric(){
             }
         }
     }
+
     return stack.pop();
 }
 int ExprCell::precedence(char c){
@@ -357,15 +351,13 @@ int ExprCell::precedence(char c){
 }
 void ExprCell::parse_expression(){
     Stack stack;
-
     data.insert(0,"(");
     data.push_back(')');
-
     for(int i=0;i<data.length();i++){
         if(isalpha(data[i])){
             exp_vec.push_back(data.substr(i,2));
             i++;
-        }else if( isdigit(data[i])){
+            }else if( isdigit(data[i])){
             exp_vec.push_back(data.substr(i,1));
         }else if(data[i] =='(' || data[i] =='[' || data[i] == '{'){
             stack.push(data.substr(i,1));
@@ -374,15 +366,98 @@ void ExprCell::parse_expression(){
             while(t != "("  && t!="[" && t!="{"){
                 exp_vec.push_back(t);
                 t = stack.pop();
+                //std::cout << t << " poped from stack "<< std::endl;
             }
             // stack.peek()은 string형을 반환하고 precedence는char를 인자로 받음 
         }else if ( data[i] == '+' || data[i] == '-'|| data[i] =='*' || data[i] == '/'){
-            while(!stack.is_empty() && precedence(stack.pop()) >= precedence(data[i])){
+            while(!stack.is_empty() && precedence(stack.peek()[0]) >= precedence(data[i])){
                 exp_vec.push_back(stack.pop());
+                for (int i=0;i<exp_vec.size();i++){
+                    //std::cout << "exP_vec["<<i<<"] : "<<exp_vec[i]<<std::endl;
+                }
             }
+            stack.push(data.substr(i,1));
+            //std::cout << data.substr(i,1)<< " pused to stack"<<std::endl;
         } 
     }
 }
+
+/*
+
+Excel class
+
+*/
+Excel::Excel(int max_row,int max_col, int choice = 0){
+    switch(choice){
+        case 0: current_table = new TxtTable(max_row, max_col);
+        break;
+    }
+
+}
+int Excel::parse_user_input(string s){
+    int next = 0;
+    string command = "";
+    for(int i=0; i<s.length();i++){
+        if(s[i] == ' '){
+            command = s.substr(0,i);
+            next = i+1;
+            break;
+        }else if( i == s.length()-1){
+            command = s.substr(0,i+1);
+            next    = i+1;
+            break;
+        }
+    }
+
+    string to = "";
+    for(int i=next;i<s.length();i++){
+        if(s[i] == ' ' || i==s.length() -1){
+            to      = s.substr(next,i-next);
+            next    = i+1;
+            break;
+        }else if( i == s.length()-1){
+            to      = s.substr(0,i+1);
+            next    = i+1;
+            break;
+        }
+    }
+
+    int col = to[0] -'A';
+    int row = atoi(to.c_str()+1)-1;
+
+    string rest = s.substr(next);
+
+    if(command == "sets"){
+        current_table -> reg_cell(new StringCell(rest, row, col, current_table), row,col);
+    }else if(command == "setn"){ 
+        current_table -> reg_cell(
+            new NumberCell(atoi(rest.c_str()),row, col, current_table),row,col);
+    }else if(command == "setd"){
+        current_table -> reg_cell(
+            new DateCell(rest, row, col, current_table), row, col);
+    }else if(command == "sete"){
+        current_table -> reg_cell(
+            new ExprCell(rest, row, col, current_table),row, col);
+    }else if(command == "out"){
+        std::ofstream out(to);
+        out << *current_table;
+        std::cout << to << " 에 내용이 저장되었습니다" << std::endl;
+    }else if(command == "exit"){
+        return 0;
+    }
+    return 1;
+}
+
+void Excel::command_line(){
+    string s;
+    std::getline(std::cin, s);
+
+    while(parse_user_input(s)){
+        std::cout << *current_table << std::endl << ">> ";
+        std::getline(std::cin,s );
+    }
+}
+
 
 
 }// namespace MyExcel
