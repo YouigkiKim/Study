@@ -3,6 +3,7 @@
 #include<iostream>
 #include <ostream>
 #include <string>
+#include <ctime>
 using std::string;
 
 namespace MyExcel{
@@ -47,21 +48,76 @@ class Stack{
      bool is_empty();
      ~Stack();
 };
+class NumStack{
+    struct Node {
+        Node* prev;
+        double s;
+        Node(Node* prev, double s) : prev(prev),s(s) {}
+    };
+    Node* current;
+    Node start;
 
+    public:
+    NumStack();
+    void push(double s);
+    double pop();
+    double peek();
+    bool is_empty();
 
+    ~NumStack();
+};
+//Cell class and dreived class
 class Cell{
 
     protected:
     int x,y;
     Table* table;
+
+    public:
+    virtual string stringify() = 0;
+    virtual int to_numeric() = 0;
+
+    Cell( int x, int y, Table* table);
+};
+
+class StringCell : public Cell {
     string data;
 
     public:
-    virtual string stringify();
-    virtual int to_numeric();
+    string stringify();
+    int to_numeric();
 
-    Cell(string data, int x, int y, Table* table);
+    StringCell(string data, int x,int y, Table* t);
 };
+
+class NumberCell : public Cell{
+    int data;
+    public:
+    string stringify();
+    int to_numeric();
+    NumberCell(int data, int x, int y ,Table*t);
+};
+
+class DateCell : public Cell{
+    time_t data;
+    public:
+    DateCell(string s, int x, int y, Table* t);
+    string stringify();
+    int to_numeric();
+};
+
+class ExprCell : public Cell{
+    string data;
+    string* parsed_expr;
+    Vector exp_vec;
+    int precedence(char c);
+    void parse_expression();
+    public:
+    ExprCell(string data, int x, int y,Table *t);
+    string stringify();
+    int to_numeric();
+};
+
 
 class Table{
 
