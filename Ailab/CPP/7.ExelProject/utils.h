@@ -24,6 +24,7 @@ class Vector{
 
     public:
     Vector(int n=1);
+    
     ~Vector();
     void    push_back(string s);
     string  operator[](int i);
