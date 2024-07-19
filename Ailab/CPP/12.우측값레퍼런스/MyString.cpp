@@ -12,8 +12,11 @@ class MyString{
     MyString(char c);
     MyString(const char* str);
     MyString(const MyString& str);
+    MyString(MyString &&str); // 이동 생성자
     explicit MyString(int c); // explicit을 통해 암시적 컴파일 막음
     ~MyString();//소멸자
+    
+    
     //메서드
     int length() const{return string_length;};
     int getcapacity() const{return capacity;};
@@ -33,6 +36,8 @@ class MyString{
     int compare(const MyString& str) const;
     bool operator==(MyString& str);
 
+
+
     //연산자 오버로딩
     char& operator[](const int index);
     MyString& operator+=(const MyString& str);
@@ -40,6 +45,8 @@ class MyString{
     MyString& operator=(const char* str);
     char& operator[](const char* str);
 };
+
+
 //생성자 함수
 MyString::MyString(int c) : capacity(c){}
 MyString::MyString(char c)
@@ -60,8 +67,15 @@ MyString::MyString(const MyString& str)
         string_content[i] = str.string_content[i];
     }
 }
+MyString::MyString(MyString &&str)
+ : string_length(str.string_length),capacity(str.capacity){
+    std::cout <<"이동생성자 호출 "<< std::endl;
+    string_content = str.string_content;
+    //str의 string_content를 가르키는 객체가 있기 떄문에 nullptr로 바꿔 소멸을 막는다
+    str.string_content = nullptr;
+}
 //소멸자 함수
-MyString::~MyString(){delete[] string_content;}
+MyString::~MyString(){if(string_content != nullptr) delete[] string_content;}
 //메서드
 void MyString::print() const{
     for (int i=0;i<string_length;i++){
